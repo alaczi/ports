@@ -7,6 +7,9 @@
 *.dll
 *.so
 *.dylib
+build/*
+!build/.gitkeep
+
 
 # Test binary, built with `go test -c`
 *.test
@@ -19,3 +22,7 @@
 
 # Go workspace file
 go.work
+go.work.sum
+
+# intellijs ide
+.idea

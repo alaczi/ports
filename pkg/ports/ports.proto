@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option go_package = "github.com/alaczi/ports/ports";
+
+package ports;
+
+service PortDomainService {
+
+  rpc GetPort(PortId) returns (Port) {}
+
+  rpc UpsertPort(Port) returns (Empty) {}
+
+  rpc UpsertPorts(stream Port) returns (PortSummary) {}
+}
+
+message Port {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  string city = 4;
+  string country = 5;
+  string timezone = 6;
+  optional string province = 7;
+  repeated float coordinates = 8;
+  repeated string alias = 9;
+  repeated string regions = 10;
+  repeated string unlocs = 11;
+}
+
+message Ports {
+  repeated Port ports = 1;
+}
+
+message PortSummary {
+  uint64 received_total = 1;
+}
+
+message PortId {
+  string id = 1;
+}
+
+message Empty {
+}

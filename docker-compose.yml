@@ -1,0 +1,30 @@
+version: '2'
+services:
+  domain:
+    build:
+      dockerfile: ./services/domain/Dockerfile
+      context: ./
+    image: domain
+    ports:
+      - "50051:50051/tcp"
+    environment:
+      - DOMAIN_PORT=50051
+    networks:
+      - ports-net
+  client:
+    depends_on:
+      - domain
+    build:
+      dockerfile: ./services/client/Dockerfile
+      context: ./
+    image: client
+    ports:
+      - "8080:8080/tcp"
+    environment:
+      - CLIENT_SERVERPORT=8080
+      - CLIENT_PORTSERVICEADDR=domain:50051
+      - CLIENT_DATAFILE=./data/ports.json
+    networks:
+      - ports-net
+networks:
+  ports-net:
