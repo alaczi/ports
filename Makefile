@@ -40,8 +40,10 @@ docker-build-client: build-client
 docker-build-domain: build-domain
 	docker build ./ -f ./services/domain/Dockerfile -t domain
 
-docker-rebuild:
+docker-build:
 	docker-compose build
+
+docker-rebuild: docker-build
 
 docker-start:
 	docker-compose up --detach
