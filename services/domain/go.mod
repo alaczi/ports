@@ -3,7 +3,8 @@ module port_domain_service
 go 1.21
 
 require (
-	github.com/alaczi/ports/repository v0.1.0
+	github.com/alaczi/ports/ports v0.2.0
+	github.com/alaczi/ports/repository v0.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/dig v1.17.1
 	google.golang.org/grpc v1.60.1
@@ -18,6 +19,6 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
-replace github.com/alaczi/ports/ports v0.1.0 => ./../../pkg/ports
+replace github.com/alaczi/ports/ports v0.2.0 => ./../../pkg/ports
 
-replace github.com/alaczi/ports/repository v0.1.0 => ./../../pkg/repository
+replace github.com/alaczi/ports/repository v0.2.0 => ./../../pkg/repository
