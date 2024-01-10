@@ -13,7 +13,3 @@ type Port struct {
 	Regions     []string  `json:"regions"`
 	Unlocs      []string  `json:"unlocs"`
 }
-
-type PortSummary struct {
-	ReceivedTotal uint64
-}

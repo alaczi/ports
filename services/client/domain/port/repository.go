@@ -1,4 +1,4 @@
-package main
+package port
 
 import (
 	"context"
@@ -20,30 +20,33 @@ type GRPCPortRepository struct {
 	client pb.PortDomainServiceClient
 }
 
-func newGRPCPortRepository(portServiceAddr *string, dataFile *string) *GRPCPortRepository {
+func NewGRPCPortRepository(ctx context.Context, portServiceAddr *string, dataFile *string) *GRPCPortRepository {
 	conn, err := grpc.Dial(*portServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to the GRPC endpoint: %v", err)
 	}
+	log.Print("Connected to the api endpoint")
 	client := pb.NewPortDomainServiceClient(conn)
 	repo := &GRPCPortRepository{
 		client: client,
 	}
-	log.Print("Connected to the grpc endpoint")
-	err = repo.initializeData(dataFile)
-	if err != nil {
-		log.Fatalf("Data upload failed: %v", err)
-	}
-	log.Print("Initial data upload finished")
+	go func() {
+		log.Print("Starting data upload")
+		err = repo.initializeData(ctx, dataFile)
+		if err != nil {
+			log.Fatalf("Data upload failed: %v", err)
+		}
+		log.Print("Initial data upload finished")
+	}()
 	return repo
 }
 
-func (s *GRPCPortRepository) UpsertPort(port *repo.Port) error {
+func (s *GRPCPortRepository) UpsertPort(ctx context.Context, port *repo.Port) error {
 	return errors.New("Not supported")
 }
 
-func (s *GRPCPortRepository) GetPort(id string) (*repo.Port, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+func (s *GRPCPortRepository) GetPort(ctx context.Context, id string) (*repo.Port, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 	result, err := s.client.GetPort(ctx, &pb.PortId{Id: id})
 	if err != nil {
@@ -58,7 +61,7 @@ func (s *GRPCPortRepository) GetPort(id string) (*repo.Port, error) {
 	return pb.ToPort(result), nil
 }
 
-func (s *GRPCPortRepository) initializeData(dataFile *string) error {
+func (s *GRPCPortRepository) initializeData(ctx context.Context, dataFile *string) error {
 	f, err := os.Open(*dataFile)
 	if err != nil {
 		return err
@@ -71,7 +74,7 @@ func (s *GRPCPortRepository) initializeData(dataFile *string) error {
 	}()
 	dec := json.NewDecoder(f)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 	stream, err := s.client.UpsertPorts(ctx)
 	if err != nil {
