@@ -1,7 +1,9 @@
 package main
 
 import (
+	"github.com/alaczi/ports/logger"
 	repo "github.com/alaczi/ports/repository"
+
 	"go.uber.org/dig"
 	"log"
 	"os"
@@ -14,13 +16,16 @@ import (
 
 func main() {
 	container := dig.New()
-	container.Provide(services.NewConfig)
+	if err := container.Provide(services.NewConfig); err != nil {
+		log.Fatalf("Failed to read configration %v", err)
+	}
+	container.Provide(provideLogger)
 	container.Provide(provideRepository)
 	container.Provide(providePortService)
 	container.Provide(provideServer)
 
-	startup := func(server *api.PortServer) {
-		server.Serve()
+	startup := func(server *api.PortServer) error {
+		return server.Serve()
 	}
 	if err := container.Invoke(startup); err != nil {
 		log.Fatalf("Failed to start the server %v", err)
@@ -37,14 +42,17 @@ func main() {
 	}
 }
 
-func provideRepository() repo.PortRepository {
-	return port.NewInMemoryPortRepository()
+func provideLogger() logger.Logger {
+	return &logger.ConsoleLogger{}
+}
+func provideRepository(log logger.Logger) repo.PortRepository {
+	return port.NewInMemoryPortRepository(log)
 }
 
 func providePortService(repository repo.PortRepository) services.PortServiceInterface {
 	return services.NewPortService(repository)
 }
 
-func provideServer(config *services.Config, postService services.PortServiceInterface) *api.PortServer {
-	return api.NewPortServer(config, postService)
+func provideServer(config *services.Config, log logger.Logger, postService services.PortServiceInterface) *api.PortServer {
+	return api.NewPortServer(config, log, postService)
 }

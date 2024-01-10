@@ -2,33 +2,36 @@ package port
 
 import (
 	"context"
+	"github.com/alaczi/ports/logger"
 	repo "github.com/alaczi/ports/repository"
 	"sync"
 )
 
 type InMemoryPortRepository struct {
-	mu    sync.Mutex
-	ports map[string]*repo.Port
+	mu     sync.Mutex
+	ports  map[string]*repo.Port
+	logger logger.Logger
 }
 
-func NewInMemoryPortRepository() *InMemoryPortRepository {
-	s := &InMemoryPortRepository{
-		ports: make(map[string]*repo.Port),
+func NewInMemoryPortRepository(log logger.Logger) *InMemoryPortRepository {
+	r := &InMemoryPortRepository{
+		ports:  make(map[string]*repo.Port),
+		logger: log,
 	}
-	return s
+	return r
 }
 
-func (s *InMemoryPortRepository) UpsertPort(ctx context.Context, port *repo.Port) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.ports[port.Id] = port
+func (r *InMemoryPortRepository) UpsertPort(ctx context.Context, port *repo.Port) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.ports[port.Id] = port
 	return nil
 }
 
-func (s *InMemoryPortRepository) GetPort(ctx context.Context, id string) (*repo.Port, error) {
+func (r *InMemoryPortRepository) GetPort(ctx context.Context, id string) (*repo.Port, error) {
 	ch := make(chan *repo.Port)
 	go func(ch chan *repo.Port, id string) {
-		if port, ok := s.ports[id]; ok {
+		if port, ok := r.ports[id]; ok {
 			ch <- port
 		}
 		ch <- nil
@@ -36,7 +39,10 @@ func (s *InMemoryPortRepository) GetPort(ctx context.Context, id string) (*repo.
 
 	select {
 	case <-ctx.Done():
-		return nil, ctx.Err()
+		{
+			r.logger.Logf("Context returned error before the port was retrieved: %v", ctx.Err())
+			return nil, ctx.Err()
+		}
 	case port := <-ch:
 		return port, nil
 	}

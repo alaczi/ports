@@ -3,12 +3,12 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/alaczi/ports/logger"
 	pb "github.com/alaczi/ports/ports"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
-	"log"
 	"net"
 	"port_domain_service/services"
 )
@@ -18,26 +18,29 @@ type PortServer struct {
 	portService services.PortServiceInterface
 	port        int
 	server      *grpc.Server
+	logger      logger.Logger
 }
 
-func NewPortServer(config *services.Config, portService services.PortServiceInterface) *PortServer {
+func NewPortServer(config *services.Config, log logger.Logger, portService services.PortServiceInterface) *PortServer {
 	s := &PortServer{
 		portService: portService,
 		port:        config.Port,
+		logger:      log,
 	}
 	return s
 }
 
-func (s *PortServer) Serve() {
+func (s *PortServer) Serve() error {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		s.logger.Logf("failed to listen: %v", err)
+		return err
 	}
-	log.Printf("Service started on port: %v", s.port)
+	s.logger.Logf("Service started on port: %v", s.port)
 	var opts []grpc.ServerOption
 	s.server = grpc.NewServer(opts...)
 	pb.RegisterPortDomainServiceServer(s.server, s)
-	s.server.Serve(listener)
+	return s.server.Serve(listener)
 }
 
 func (s *PortServer) Shutdown() {

@@ -3,8 +3,9 @@ module port_domain_service
 go 1.21
 
 require (
-	github.com/alaczi/ports/ports v0.2.0
-	github.com/alaczi/ports/repository v0.2.0
+	github.com/alaczi/ports/logger v0.3.0
+	github.com/alaczi/ports/ports v0.3.0
+	github.com/alaczi/ports/repository v0.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/dig v1.17.1
 	google.golang.org/grpc v1.60.1
@@ -16,6 +17,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
 	github.com/onsi/ginkgo/v2 v2.13.2 // indirect
+	go.uber.org/mock v0.4.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
@@ -24,6 +26,8 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
-replace github.com/alaczi/ports/ports v0.2.0 => ./../../pkg/ports
+replace github.com/alaczi/ports/ports v0.3.0 => ./../../pkg/ports
 
-replace github.com/alaczi/ports/repository v0.2.0 => ./../../pkg/repository
+replace github.com/alaczi/ports/repository v0.3.0 => ./../../pkg/repository
+
+replace github.com/alaczi/ports/logger v0.3.0 => ./../../pkg/logger
