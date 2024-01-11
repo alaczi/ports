@@ -19,7 +19,7 @@ build: build-client build-domain
 	go build -C ./services/domain -o ../../build/
 	go build -C ./services/client -o ../../build/
 
-run: build
+start: build
 	./build/port_domain_service &
 	GOMEMLIMIT=200MiB ./build/client &
 
