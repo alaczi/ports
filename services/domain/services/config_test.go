@@ -10,7 +10,7 @@ import (
 
 func TestPort(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Port Suite")
+	RunSpecs(t, "Config suite")
 }
 
 var _ = Describe("Tests for configuration service", func() {

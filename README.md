@@ -16,10 +16,11 @@ On startup the client application reads the port data from the provided json fil
 Some of the commands assumes that a golang environment was set up on the developer's machine.
 Requires golang 1.21.1 version.
 
-Install golang using the [official documentation](https://go.dev/doc/install)
-Install protoc using the [guide](https://grpc.io/docs/protoc-installation/)
-Install golang plugins described [here](https://grpc.io/docs/languages/go/quickstart/)
-install [ginkgo]https://onsi.github.io/ginkgo/ for test 
+- Install golang using the [official documentation](https://go.dev/doc/install)
+- Install protoc using the [guide](https://grpc.io/docs/protoc-installation/)
+- Install golang plugins described [here](https://grpc.io/docs/languages/go/quickstart/)
+- Install [ginkgo](https://onsi.github.io/ginkgo/) for test
+- Install [staticcheck](https://github.com/dominikh/go-tools#installation) `go install honnef.co/go/tools/cmd/staticcheck@2023.1.6`
 
 ### Application configuration
 The services used environment variables for configuration as described in [12 factor app](https://12factor.net/config) 
@@ -27,7 +28,8 @@ The services used environment variables for configuration as described in [12 fa
 #### Domain app
 
 The domain app configuration parameters use the "DOMAIN_" prefix. The default values in the list
-    - DOMAIN_PORT="50051" //defines the port for the GRPC service
+
+- DOMAIN_PORT="50051" //defines the port for the GRPC service
 
 #### Client app
 
@@ -41,21 +43,33 @@ The client app configuration parameters use the "CLIENT_" prefix
 
 The makefile multiple utilities to build, execute, test, lint the code.
 
-
-###### (Re)build the application
+###### Run (&build) locally
+```shell
+    make run
 ```
+
+###### Run tests
+```shell
+    make test
+```
+
+###### Run linter
+```shell
+    make lint
+```
+
+###### (Re)build the application with docker
+```shell
     make docker-build
 ```
 
-###### Start the application
-```
+###### Start the application in docker
+```shell
     make docker-start
 ```
 
-By default, the client listens on the port 8080 while the GRPC endpoint exposed on 50051. This can be changed using environment variables.
-
-###### Stop the application
-```
+###### Stop the docker containers
+```shell
     make docker-stop
 ```
 

@@ -14,7 +14,7 @@ import (
 
 func TestPort(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Port Suite")
+	RunSpecs(t, "Repository test suite")
 }
 
 var _ = Describe("Tests for in memory repository", func() {

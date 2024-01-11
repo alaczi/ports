@@ -32,10 +32,24 @@ fmt:
 	go mod tidy -C ./pkg/ports
 	go fmt -C ./pkg/repository
 	go mod tidy -C ./pkg/repository
+	go fmt -C ./pkg/logger
+	go mod tidy -C ./pkg/logger
 	go fmt -C ./services/client
 	go mod tidy -C ./services/client
 	go fmt -C ./services/domain
 	go mod tidy -C ./services/domain
+
+lint:
+	go vet -C ./pkg/ports
+	go vet -C ./pkg/repository
+	go vet -C ./pkg/logger
+	go vet -C ./services/domain
+	go vet -C ./services/client
+	staticcheck ./pkg/ports
+	staticcheck ./pkg/repository
+	staticcheck ./pkg/logger
+	staticcheck ./services/client
+	staticcheck ./services/domain
 
 docker-build-client: build-client
 	docker build ./ -f ./services/client/Dockerfile -t client
