@@ -6,10 +6,10 @@ Two services sharing components.
 Domain backend:
 A GRPC / Protobuff backend to provide a repository service to store / retrieve port data
 
-Client API
+Client API:
 A REST API to expose port data utilizing the domain backend
 
-On startup the client application reads the port data from the provided json file and adds the items to the backend service 
+On startup the client application reads the port data from the provided json file and adds the items to the backend service. 
 
 ### Setup
 
@@ -49,8 +49,15 @@ The makefile multiple utilities to build, execute, test, lint the code.
 ```
 
 ###### Run tests
+
+####### Unit tests using gingko & gomega
 ```shell
     make test
+```
+
+####### BDD tests using godog & gomega
+```shell
+    make bdd-test
 ```
 
 ###### Run linter

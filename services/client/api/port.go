@@ -24,13 +24,14 @@ func (p *PortHandler) getPort(w http.ResponseWriter, r *http.Request) {
 	key := vars["id"]
 	port, err := p.portService.GetPort(ctx, key)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		InternalServerError(w)
 		return
 	}
 	if port == nil {
-		http.NotFound(w, r)
+		NotFound(w, "port")
 		return
 	}
+	w.Header()
 	json.NewEncoder(w).Encode(port)
 }
 

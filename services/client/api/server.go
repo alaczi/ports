@@ -25,6 +25,7 @@ func NewClientServer(config *services.Config, handlers []HttpRequestHandler) *Cl
 
 func (s *ClientServer) HandleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
+	router.Use(jsonHeaderMiddleware)
 	for _, handler := range s.handlers {
 		handler.RegisterRoutes(router)
 	}
@@ -44,4 +45,11 @@ func (s *ClientServer) Shutdown(ctx context.Context) {
 		log.Fatalf("Server shutdown failed: %v\n", err)
 	}
 	log.Print("Server was shut down")
+}
+
+func jsonHeaderMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
 }

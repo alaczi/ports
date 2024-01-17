@@ -3,6 +3,11 @@
 test:
 	ginkgo -r
 
+bdd-test-inner:
+	cd bdd-tests && go test
+
+bdd-test: build bdd-test-inner stop
+
 generate_pb:
 	protoc --experimental_allow_proto3_optional --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative pkg/ports/ports.proto
 
